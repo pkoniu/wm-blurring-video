@@ -62,7 +62,7 @@ if fromFile == 'fromFile':
                 print roi_eye
 
                 cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 0, 255), 2)
-                frame[y:newy + eh, x:newx + ex] = roi_eye
+                frame[y:newy + eh, x:newx + ew] = roi_eye
 
 
         # Display the resulting frame
