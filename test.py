@@ -49,7 +49,7 @@ if fromFile == 'fromFile':
 
         # Display the resulting frame
         cv2.imshow('Video', frame)
-    cap.release()
+    video_capture.release()
     cv2.destroyAllWindows()
 else:
     log.basicConfig(filename='webcam.log',level=log.INFO)
