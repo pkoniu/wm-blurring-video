@@ -3,6 +3,7 @@ import sys
 import logging as log
 import datetime as dt
 from time import sleep
+import numpy as npm
 
 fromFile = sys.argv[1]
 
@@ -38,31 +39,30 @@ if fromFile == 'fromFile':
 
         # Draw a rectangle around the faces
         for (x, y, w, h) in faces:
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            # cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             roi_gray = gray[y:y + h, x:x + w]
             roi_color = frame[y:y + h, x:x + w]
 
             eyes = eyeCascade.detectMultiScale(roi_gray)
 
+            changed_face = cv2.GaussianBlur(roi_color, (23, 23), 30)
+
+            temp_frame = npm.copy(frame)
+
+            if len(eyes) > 0:
+                frame[y:y + h, x:x + w] = changed_face
+
             for (ex, ey, ew, eh) in eyes:
                 newx = ex + x
                 newy = ey + y
 
-
                 # crop_out = cv2.rectangle(ex, ey, ew, eh)
+                roi_eye = temp_frame[newy:newy + eh, newx:newx + ew]
 
-                print ex, ey, ew, eh
+                # roi_eye = cv2.GaussianBlur(roi_eye, (23, 23), 30)
 
-                roi_eye = frame[y:newy + eh, x:newx + ew]
-
-                print roi_eye
-
-                roi_eye = cv2.GaussianBlur(roi_eye, (23, 23), 30)
-
-                print roi_eye
-
-                cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 0, 255), 2)
-                frame[y:newy + eh, x:newx + ew] = roi_eye
+                # cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 0, 255), 2)
+                frame[newy:newy + eh, newx:newx + ew] = roi_eye
 
 
         # Display the resulting frame
@@ -101,8 +101,24 @@ else:
 
             eyes = eyeCascade.detectMultiScale(roi_gray)
 
+            changed_face = cv2.GaussianBlur(roi_color, (23, 23), 30)
+
+            temp_frame = npm.copy(frame)
+
+            if len(eyes) > 0:
+                frame[y:y + h, x:x + w] = changed_face
+
             for (ex, ey, ew, eh) in eyes:
-                cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 0, 255), 2)
+                newx = ex + x
+                newy = ey + y
+
+                # crop_out = cv2.rectangle(ex, ey, ew, eh)
+                roi_eye = temp_frame[newy:newy + eh, newx:newx + ew]
+
+                # roi_eye = cv2.GaussianBlur(roi_eye, (23, 23), 30)
+
+                # cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 0, 255), 2)
+                frame[newy:newy + eh, newx:newx + ew] = roi_eye
 
         if anterior != len(faces):
             anterior = len(faces)
